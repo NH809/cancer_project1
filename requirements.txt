@@ -1,7 +1,8 @@
 Flask==2.3.3
 numpy==1.24.4
 opencv-python==4.8.1.78
-tensorflow==2.10.1
+tensorflow==2.6.0
+keras==2.6.0
 mysql-connector-python
 reportlab
 gunicorn
