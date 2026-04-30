@@ -25,7 +25,7 @@ model = None
 model_path = "model.h5"
 
 if not os.path.exists(model_path):
-    url = "https://drive.google.com/uc?id=YOUR_FILE_ID"
+    url = "https://drive.google.com/uc?id=1uevBD7YUZy9U5nGlHC1Xe3_mCNY2iwju"
     gdown.download(url, model_path, quiet=False)
 
 if os.path.exists(model_path):
