@@ -18,6 +18,14 @@ os.makedirs(HEATMAP_FOLDER, exist_ok=True)
 
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
+model_path = os.path.join(os.getcwd(), "model.h5")
+
+if os.path.exists(model_path):
+    model = load_model(model_path, compile=False)
+else:
+    model = None
+    print("Model file not found")
+
 # ================= LOAD MODEL =================
 model = load_model("model.h5", compile=False)
 
