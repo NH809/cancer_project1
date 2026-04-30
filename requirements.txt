@@ -5,3 +5,4 @@ tensorflow==2.10.1
 mysql-connector-python
 reportlab
 gunicorn
+gdown

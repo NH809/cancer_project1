@@ -1,6 +1,7 @@
 from flask import Flask, render_template, request, redirect, session
 import os, cv2
 import numpy as np
+import gdown
 from tensorflow.keras.models import load_model
 from tensorflow.keras.preprocessing import image
 from reportlab.platypus import SimpleDocTemplate, Paragraph
@@ -20,11 +21,18 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 model_path = os.path.join(os.getcwd(), "model.h5")
 
+model = None
+model_path = "model.h5"
+
+if not os.path.exists(model_path):
+    url = "https://drive.google.com/uc?id=YOUR_FILE_ID"
+    gdown.download(url, model_path, quiet=False)
+
 if os.path.exists(model_path):
     model = load_model(model_path, compile=False)
+    print("✅ Model Loaded")
 else:
-    model = None
-    print("Model file not found")
+    print("❌ Model not found")
 
 # ================= LOAD MODEL =================
 
