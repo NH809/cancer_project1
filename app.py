@@ -27,7 +27,7 @@ else:
     print("Model file not found")
 
 # ================= LOAD MODEL =================
-model = load_model("model.h5", compile=False)
+
 
 # ================= DATABASE =================
 try:
