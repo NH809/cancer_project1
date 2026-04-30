@@ -22,14 +22,19 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 model = load_model("model.h5", compile=False)
 
 # ================= DATABASE =================
-db = mysql.connector.connect(
-    host="localhost",
-    user="root",
-    password="Nikita@2005",
-    database="cancer_db"
-)
-cursor = db.cursor()
-print("✅ DB Connected")
+try:
+    db = mysql.connector.connect(
+        host="localhost",
+        user="root",
+        password="Nikita@2005",
+        database="cancer_db"
+    )
+    cursor = db.cursor()
+    print("✅ DB Connected")
+except:
+    db = None
+    cursor = None
+    print("⚠️ DB Not Connected (Running without DB)")
 
 # ================= MRI VALIDATION =================
 def is_mri_image(path):
@@ -124,8 +129,11 @@ def admin():
     if session.get('role') != 'admin':
         return redirect('/login')
 
-    cursor.execute("SELECT * FROM reports ORDER BY id DESC")
-    data = cursor.fetchall()
+    if cursor:
+        cursor.execute("SELECT * FROM reports ORDER BY id DESC")
+        data = cursor.fetchall()
+    else:
+        data = []
 
     return render_template("admin.html", data=data)
 
@@ -135,8 +143,11 @@ def doctor():
     if session.get('role') != 'doctor':
         return redirect('/login')
 
-    cursor.execute("SELECT * FROM reports ORDER BY id DESC")
-    data = cursor.fetchall()
+    if cursor:
+        cursor.execute("SELECT * FROM reports ORDER BY id DESC")
+        data = cursor.fetchall()
+    else:
+        data = []
 
     return render_template("doctor.html", data=data)
 
@@ -144,11 +155,12 @@ def doctor():
 def add_note(id):
     note = request.form.get('note')
 
-    cursor.execute(
-        "UPDATE reports SET doctor_notes=%s WHERE id=%s",
-        (note, id)
-    )
-    db.commit()
+    if cursor:
+        cursor.execute(
+            "UPDATE reports SET doctor_notes=%s WHERE id=%s",
+            (note, id)
+        )
+        db.commit()
 
     return redirect('/doctor')
 
@@ -257,11 +269,12 @@ def predict():
     except Exception as e:
         print("Heatmap Error:", e)
 
-    cursor.execute(
-        "INSERT INTO reports (name,image,result,confidence,stage) VALUES (%s,%s,%s,%s,%s)",
-        (name, file.filename, result, confidence, stage)
-    )
-    db.commit()
+    if cursor:
+        cursor.execute(
+            "INSERT INTO reports (name,image,result,confidence,stage) VALUES (%s,%s,%s,%s,%s)",
+            (name, file.filename, result, confidence, stage)
+        )
+        db.commit()
 
     return render_template("index.html",
         name=name,
@@ -281,8 +294,11 @@ def history():
     if 'user' not in session:
         return redirect('/login')
 
-    cursor.execute("SELECT * FROM reports ORDER BY id DESC")
-    data = cursor.fetchall()
+    if cursor:
+        cursor.execute("SELECT * FROM reports ORDER BY id DESC")
+        data = cursor.fetchall()
+    else:
+        data = []
     return render_template("history.html", data=data)
 
 # ================= SEARCH =================
@@ -290,19 +306,24 @@ def history():
 def search():
     keyword = request.form.get('search')
 
-    cursor.execute(
-        "SELECT * FROM reports WHERE name LIKE %s ORDER BY id DESC",
-        ('%' + keyword + '%',)
-    )
-
-    data = cursor.fetchall()
+    if cursor:
+        cursor.execute(
+            "SELECT * FROM reports WHERE name LIKE %s ORDER BY id DESC",
+            ('%' + keyword + '%',)
+        )
+        data = cursor.fetchall()
+    else:
+        data = []
     return render_template("history.html", data=data)
 
 # ================= DASHBOARD =================
 @app.route('/dashboard')
 def dashboard():
-    cursor.execute("SELECT result, COUNT(*) FROM reports GROUP BY result")
-    data = cursor.fetchall()
+    if cursor:
+        cursor.execute("SELECT result, COUNT(*) FROM reports GROUP BY result")
+        data = cursor.fetchall()
+    else:
+        data = []
 
     labels = [i[0] for i in data]
     values = [i[1] for i in data]
