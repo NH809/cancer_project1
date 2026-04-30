@@ -78,5 +78,5 @@ model.compile(optimizer='adam',
 
 print("✅ Model created successfully")
 model.fit(X_train, y_train, epochs=10, validation_data=(X_test, y_test))
-model.save("model.h5")
+model.save("model.keras")
 print("✅ Model saved successfully")
