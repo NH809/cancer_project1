@@ -1,10 +1,9 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>AI Cancer Detection</title>
+<title>AI MRI Cancer Detection</title>
 
 <style>
-/* ===== GLOBAL ===== */
 body {
     margin: 0;
     font-family: 'Segoe UI', sans-serif;
@@ -12,56 +11,51 @@ body {
     color: white;
 }
 
-/* ===== SIDEBAR ===== */
-.sidebar {
-    position: fixed;
-    width: 220px;
-    height: 100%;
-    background: rgba(0,0,0,0.6);
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    padding: 20px 40px;
+    background: rgba(0,0,0,0.3);
     backdrop-filter: blur(10px);
-    padding-top: 30px;
 }
 
-.sidebar h2 {
-    text-align: center;
-    margin-bottom: 30px;
-}
-
-.sidebar a {
-    display: block;
-    color: white;
-    padding: 15px;
+.navbar a {
+    color: #00c6ff;
+    margin-left: 20px;
     text-decoration: none;
-    transition: 0.3s;
 }
 
-.sidebar a:hover {
-    background: rgba(255,255,255,0.1);
-}
-
-/* ===== MAIN ===== */
 .main {
-    margin-left: 240px;
-    padding: 40px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 90vh;
 }
 
-/* ===== CARD ===== */
 .card {
+    width: 450px;
+    padding: 30px;
+    border-radius: 20px;
     background: rgba(255,255,255,0.1);
     backdrop-filter: blur(12px);
-    border-radius: 20px;
-    padding: 25px;
-    width: 400px;
-    box-shadow: 0 8px 32px rgba(0,0,0,0.3);
-    animation: fadeIn 1s ease;
+    border: 1px solid rgba(255,255,255,0.2);
+    box-shadow: 0 0 40px rgba(0,0,0,0.5);
+    text-align: center;
 }
 
-/* ===== BUTTON ===== */
-button {
-    background: #00c6ff;
-    border: none;
-    padding: 10px 20px;
+input {
+    width: 90%;
+    padding: 10px;
+    margin: 10px;
     border-radius: 10px;
+    border: none;
+}
+
+button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 10px;
+    background: linear-gradient(45deg,#00c6ff,#0072ff);
     color: white;
     cursor: pointer;
     transition: 0.3s;
@@ -71,74 +65,144 @@ button:hover {
     background: #0072ff;
 }
 
-/* ===== IMAGE ===== */
+.result {
+    margin-top: 20px;
+    padding: 20px;
+    border-radius: 15px;
+}
+
+.red { background: rgba(255,0,0,0.2); }
+.green { background: rgba(0,255,0,0.2); }
+
 img {
+    width: 220px;
     margin-top: 10px;
     border-radius: 10px;
 }
 
-/* ===== ANIMATION ===== */
-@keyframes fadeIn {
-    from {opacity: 0; transform: translateY(20px);}
-    to {opacity: 1; transform: translateY(0);}
+.stage {
+    font-weight: bold;
+    font-size: 18px;
 }
 
-/* ===== TOGGLE MODE ===== */
-.toggle {
-    position: absolute;
-    top: 20px;
-    right: 30px;
-    cursor: pointer;
+.desc {
+    font-size: 14px;
+    color: #ddd;
 }
 
-/* DARK MODE */
-.dark {
-    background: #111;
+    .main {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 40px;
+    padding-top: 40px;
+}
+
+/* DOCTOR PANEL */
+.doctor-panel {
+    width: 350px;
+    padding: 20px;
+    border-radius: 20px;
+    background: rgba(255,255,255,0.08);
+    backdrop-filter: blur(15px);
+    border: 1px solid rgba(255,255,255,0.2);
+    box-shadow: 0 0 30px rgba(0,0,0,0.5);
+}
+
+/* NOTE BOX */
+.note-box {
+    background: rgba(0,0,0,0.4);
+    padding: 15px;
+    border-radius: 15px;
+    font-size: 14px;
+    line-height: 1.6;
+    white-space: pre-wrap;
+    color: #ddd;
+    margin-top: 10px;
 }
 </style>
-
-<script>
-function toggleMode() {
-    document.body.classList.toggle("dark");
-}
-</script>
-
 </head>
 
 <body>
 
-<!-- SIDEBAR -->
-<div class="sidebar">
-    <h2>🧠 AI Detect</h2>
-    <a href="/">🏠 Home</a>
-    <a href="/history">📁 History</a>
-    <a href="/stats">📊 Stats</a>
-    <a href="/logout">🚪 Logout</a>
+<div class="navbar">
+    <h2>🧠 MRI Cancer Detection</h2>
+    <div>
+        <a href="/">Dashboard</a>
+        <a href="/history">History</a>
+        <a href="/logout">Logout</a>
+    </div>
 </div>
 
-<!-- MAIN -->
 <div class="main">
 
-<div class="toggle" onclick="toggleMode()">🌙</div>
-
-<h1>AI Cancer Detection System</h1>
-
+<!-- LEFT: MAIN CARD -->
 <div class="card">
 
-<form action="/predict" method="post" enctype="multipart/form-data">
-    <input type="file" name="file" required><br><br>
-    <button type="submit">Predict</button>
+<h2>AI MRI Scan Analysis</h2>
+
+<form action="/predict" method="POST" enctype="multipart/form-data">
+    <input type="text" name="name" placeholder="Enter Patient Name" required><br>
+    <input type="file" name="file" required><br>
+    <button type="submit">Analyze MRI</button>
 </form>
 
-<div id="spinner" style="display:none;">⏳ Processing...</div>
+{% if error %}
+<p style="color:red;">{{ error }}</p>
+{% endif %}
 
 {% if prediction %}
-<h3>Prediction: {{ prediction }}</h3>
-<h4>Confidence: {{ confidence }}%</h4>
-<img src="{{ url_for('static', filename='uploads/' + image) }}" width="250">
+
+<div class="result {% if 'Tumor' in prediction %}red{% else %}green{% endif %}">
+
+<h3>👤 {{ name }}</h3>
+
+<h2>{{ prediction }}</h2>
+
+<p>📊 Confidence: <b>{{ confidence }}%</b></p>
+
+<div class="stage">
+🧬 {{ stage }}
+</div>
+
+<div class="desc">
+    {% if 'Low' in stage %}
+        Low risk detected. Further clinical verification recommended.
+    {% elif 'Moderate' in stage %}
+        Moderate risk. Doctor consultation advised.
+    {% elif 'High' in stage %}
+        High risk. Immediate medical attention required.
+    {% else %}
+        No tumor detected. Patient appears healthy.
+    {% endif %}
+</div>
+
+<img src="{{ url_for('static', filename='uploads/' + image) }}">
+
+{% if heatmap %}
+<br>
+<img src="{{ url_for('static', filename='heatmaps/' + heatmap) }}">
 {% endif %}
 
 </div>
+
+{% endif %}
+
+</div>
+
+
+<!-- RIGHT: DOCTOR PANEL -->
+{% if doctor_note %}
+<div class="doctor-panel">
+
+<h3>👨‍⚕️ AI Doctor Report</h3>
+
+<div class="note-box">
+    {{ doctor_note }}
+</div>
+
+</div>
+{% endif %}
 
 </div>
 

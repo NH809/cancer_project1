@@ -1,23 +1,38 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>Stats</title>
+<title>Dashboard</title>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<style>
+body {
+    background:#1e272e;
+    color:white;
+    text-align:center;
+}
+canvas {
+    width:400px !important;
+    margin-top:50px;
+}
+</style>
 </head>
 
-<body style="background:#111; color:white; text-align:center;">
+<body>
 
-<h2>📊 Prediction Analytics</h2>
+<h2>📊 Cancer Prediction Dashboard</h2>
 
-<canvas id="chart" width="400" height="200"></canvas>
+<canvas id="myChart"></canvas>
 
 <script>
-new Chart(document.getElementById('chart'), {
-    type: 'doughnut',
+var ctx = document.getElementById('myChart').getContext('2d');
+
+new Chart(ctx, {
+    type: 'bar',
     data: {
-        labels: {{ labels|tojson }},
+        labels: {{ labels | safe }},
         datasets: [{
-            data: {{ values|tojson }},
+            label: 'Reports',
+            data: {{ values | safe }},
         }]
     }
 });

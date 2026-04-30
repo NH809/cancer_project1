@@ -1,5 +1,7 @@
-flask
-gunicorn
+Flask
 numpy
-pillow
+opencv-python
+tensorflow
 mysql-connector-python
+reportlab
+gunicorn

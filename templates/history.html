@@ -2,31 +2,78 @@
 <html>
 <head>
 <title>History</title>
+
 <style>
-body { font-family: Arial; background:#111; color:white; text-align:center; }
-table { margin:auto; border-collapse: collapse; }
-td, th { padding:10px; border:1px solid white; }
+body {
+    background:#0f2027;
+    color:white;
+    font-family:Segoe UI;
+    text-align:center;
+}
+
+table {
+    width:90%;
+    margin:auto;
+    border-collapse:collapse;
+    margin-top:20px;
+}
+
+th, td {
+    padding:12px;
+    border-bottom:1px solid #444;
+}
+
+th {
+    background:#00c6ff;
+}
+
+input {
+    padding:8px;
+    border-radius:8px;
+    border:none;
+}
+
+button {
+    padding:8px 15px;
+    background:#00c6ff;
+    border:none;
+    border-radius:8px;
+    cursor:pointer;
+}
 </style>
 </head>
 
 <body>
 
-<h2>📁 Prediction History</h2>
+<h2>📜 Patient History</h2>
+
+<form action="/search" method="POST">
+    <input type="text" name="search" placeholder="Search by name">
+    <button type="submit">Search</button>
+</form>
 
 <table>
 <tr>
 <th>ID</th>
+<th>Name</th>
 <th>Image</th>
 <th>Result</th>
-<th>Date</th>
+<th>Confidence</th>
+<th>Stage</th>
+<th>Doctor Notes</th>
 </tr>
 
 {% for row in data %}
 <tr>
 <td>{{ row[0] }}</td>
 <td>{{ row[1] }}</td>
-<td>{{ row[2] }}</td>
+<td>
+<img src="{{ url_for('static', filename='uploads/' + row[2]) }}" width="80">
+</td>
 <td>{{ row[3] }}</td>
+<td>{{ row[4] }}%</td>
+<td>{{ row[5] }}</td>
+<td>{{ row[6] if row|length > 6 else 'N/A' }}</td>
 </tr>
 {% endfor %}
 
