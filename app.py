@@ -22,18 +22,20 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 model_path = os.path.join(os.getcwd(), "model.h5")
 
 model = None
-model_path = "model.h5"
 
-if not os.path.exists("model.h5"):
-    print("Model not found!")
-    url = "https://drive.google.com/uc?id=1uevBD7YUZy9U5nGlHC1Xe3_mCNY2iwju"
-    gdown.download(url, model_path, quiet=False)
+def get_model():
+    global model
 
-if os.path.exists(model_path):
-    model = load_model(model_path, compile=False, safe_mode=False)
-    print("✅ Model Loaded")
-else:
-    print("❌ Model not found")
+    if model is None:
+        if not os.path.exists("model.h5"):
+            print("⬇️ Downloading model...")
+            url = "https://drive.google.com/uc?id=1uevBD7YUZy9U5nGlHC1Xe3_mCNY2iwju"
+            gdown.download(url, "model.h5", quiet=False)
+
+        model = load_model("model.h5", compile=False)
+        print("✅ Model Loaded")
+
+    return model
 
 # ================= LOAD MODEL =================
 
@@ -41,10 +43,10 @@ else:
 # ================= DATABASE =================
 try:
     db = mysql.connector.connect(
-        host="localhost",
-        user="root",
-        password="Nikita@2005",
-        database="cancer_db"
+        host=os.environ.get("localhost"),
+        user=os.environ.get("root"),
+        password=os.environ.get("Nikita@2005"),
+        database=os.environ.get("cancer_db")
     )
     cursor = db.cursor()
     print("✅ DB Connected")
@@ -187,8 +189,8 @@ def predict_image(path):
     arr = image.img_to_array(img)/255.0
     arr = np.expand_dims(arr, axis=0)
 
+    model = get_model()
     pred = model.predict(arr)
-    print("Prediction:", pred)
 
     classes = ['glioma', 'meningioma', 'notumor', 'pituitary']
 
@@ -271,7 +273,7 @@ def predict():
     # ===== HEATMAP =====
     heat_name = None
     try:
-        heatmap = generate_gradcam(model, arr)
+        heatmap = generate_gradcam(get_model(), arr)
 
         img_original = cv2.imread(path)
         heatmap = cv2.resize(heatmap, (img_original.shape[1], img_original.shape[0]))
