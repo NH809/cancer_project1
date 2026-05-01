@@ -42,6 +42,10 @@ def get_model():
 
 
 # ================= DATABASE =================
+
+db = None
+cursor = None
+
 try:
     db = mysql.connector.connect(
         host=os.environ.get("localhost"),
@@ -52,8 +56,7 @@ try:
     cursor = db.cursor()
     print("✅ DB Connected")
 except:
-    db = None
-    cursor = None
+
     print("⚠️ DB Not Connected (Running without DB)")
 
 # ================= MRI VALIDATION =================
@@ -109,11 +112,14 @@ def login():
         username = request.form.get('username')
         password = request.form.get('password')
 
-        cursor.execute(
-            "SELECT id, username, password, role FROM users WHERE username=%s AND password=%s",
-            (username, password)
-        )
-        user = cursor.fetchone()
+        if cursor:
+            cursor.execute(
+                "SELECT id, username, password, role FROM users WHERE username=%s AND password=%s",
+                (username, password)
+            )
+            user = cursor.fetchone()
+        else:
+            return render_template("login.html", error="Database not connected")
 
         if user:
             session['user'] = user[1]
