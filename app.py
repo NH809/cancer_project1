@@ -46,17 +46,24 @@ def get_model():
 db = None
 cursor = None
 
-try:
-    db = mysql.connector.connect(
-        host=os.environ.get("DB_HOST"),
-        user=os.environ.get("DB_USER"),
-        password=os.environ.get("DB_PASSWORD"),
-        database=os.environ.get("DB_NAME")
-    )
-    cursor = db.cursor()
-    print("✅ DB Connected")
-except Exception as e:
-    print("⚠️ DB Not Connected:", e)
+def connect_db():
+    global db, cursor
+    try:
+        db = mysql.connector.connect(
+            host=os.environ.get("DB_HOST", "localhost"),
+            user=os.environ.get("DB_USER", "root"),
+            password=os.environ.get("DB_PASSWORD", "Nikita@2005"),
+            database=os.environ.get("DB_NAME", "cancer_db")
+        )
+        cursor = db.cursor(buffered=True)
+        print("✅ DB Connected")
+
+    except Exception as e:
+        print("⚠️ DB Not Connected:", e)
+        db = None
+        cursor = None
+
+connect_db()
 
 # ================= MRI VALIDATION =================
 def is_mri_image(path):
@@ -372,6 +379,17 @@ def download(name, result, confidence, stage):
     doc.build(content)
 
     return redirect('/' + filename)
+
+
+#=======helper db==========
+def db_alive():
+    global db
+    try:
+        return db is not None and db.is_connected()
+    except:
+        return False
+if not db_alive():
+    connect_db()
 
 # ================= RUN =================
 
