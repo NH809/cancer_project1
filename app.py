@@ -24,7 +24,8 @@ model_path = os.path.join(os.getcwd(), "model.h5")
 model = None
 model_path = "model.h5"
 
-if not os.path.exists(model_path):
+if not os.path.exists("model.h5"):
+    print("Model not found!")
     url = "https://drive.google.com/uc?id=1uevBD7YUZy9U5nGlHC1Xe3_mCNY2iwju"
     gdown.download(url, model_path, quiet=False)
 
@@ -367,5 +368,4 @@ def download(name, result, confidence, stage):
 # ================= RUN =================
 
 if __name__ == "__main__":
-    port = int(os.environ.get("PORT", 10000))
-    app.run(host="0.0.0.0", port=port)
+    app.run(host="0.0.0.0", port=int(os.environ.get("PORT", 5000)))
