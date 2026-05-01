@@ -1,6 +1,7 @@
-model.h5
-*.h5
+venv/
+env/
 __pycache__/
 *.pyc
-.env
+*.h5
+model.h5
 dataset/
