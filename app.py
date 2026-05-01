@@ -48,16 +48,15 @@ cursor = None
 
 try:
     db = mysql.connector.connect(
-        host=os.environ.get("localhost"),
-        user=os.environ.get("root"),
-        password=os.environ.get("Nikita@2005"),
-        database=os.environ.get("cancer_db")
+        host=os.environ.get("DB_HOST"),
+        user=os.environ.get("DB_USER"),
+        password=os.environ.get("DB_PASSWORD"),
+        database=os.environ.get("DB_NAME")
     )
     cursor = db.cursor()
     print("✅ DB Connected")
-except:
-
-    print("⚠️ DB Not Connected (Running without DB)")
+except Exception as e:
+    print("⚠️ DB Not Connected:", e)
 
 # ================= MRI VALIDATION =================
 def is_mri_image(path):
