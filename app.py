@@ -8,6 +8,7 @@ from reportlab.platypus import SimpleDocTemplate, Paragraph
 import mysql.connector
 import tensorflow as tf
 
+
 app = Flask(__name__)
 app.secret_key = "secret123"
 
